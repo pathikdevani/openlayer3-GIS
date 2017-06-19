@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GIS Demo</title>
+
+    <link rel="stylesheet" href="js/ol/v3.20.1-dist/ol.css"/>
+    <link rel="stylesheet" href="js/jquery-seekbar-master/css/seekbar.css">
+    <link rel="stylesheet" href="style.css"/>
+
+</head>
+<body>
+<div id="map" class="map"></div>
+<div class="body">
+    <div id="seekbar"></div>
+    <div class="actions">
+        <button id="zoomIn" type="button" class="btn">Zoom In</button>
+        <button id="zoomOut" type="button" class="btn ">Zoom Out</button>
+        <button id="prevExtent" type="button" class="btn ">Prev Extent</button>
+        <button id="nextExtent" type="button" class="btn ">Next Extent</button>
+        <button id="panToLondon" type="button" class="btn ">Pan to London</button>
+        <button id="panToIndia" type="button" class="btn ">pan to India</button>
+    </div>
+    <div id="tree">
+        <ul>
+            <li>
+                <input type="checkbox">
+                <span class="title"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="flickr-info">
+    <div class="content">
+        <img src="">
+        <div>
+            <h1 class="title"></h1>
+        </div>
+    </div>
+</div>
+
+
+<script src="js/ol/v3.20.1-dist/ol.js" type="text/javascript"></script>
+<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
+<script src="js/jquery-seekbar-master/js/seekbar.js" type="text/javascript"></script>
+
+<script src="module/map.js" type="text/javascript"></script>
+<script src="module/layer.js" type="text/javascript"></script>
+<script src="module/extent.js" type="text/javascript"></script>
+<script src="module/flickr.js" type="text/javascript"></script>
+<script src="module/geojson.js" type="text/javascript"></script>
+<script src="module/points.js" type="text/javascript"></script>
+<script src="module/radial.js" type="text/javascript"></script>
+<script src="module/tree.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var $zoomIn = $("#zoomIn");
+        var $zoomOut = $("#zoomOut");
+        var $panToIndia = $("#panToIndia");
+        var $panToLondon = $("#panToLondon");
+        var $prevExtent = $("#prevExtent");
+        var $nextExtent = $("#nextExtent");
+
+
+        var map = new Map({
+            target: "map"
+        }, "tree");
+
+
+        var baseLayer = new Layer(new ol.layer.Tile({
+            source: new ol.source.OSM()
+        }));
+        var extentLayer = new Extent();
+        var geoJSONLayer = new GeoJson();
+        var pointLayer = new Point();
+        var flickerLayer = new Flickr("flickr-info");
+        var radialLayer = new Radial("seekbar");
+
+
+        map.addLayer("base", baseLayer);
+        map.addLayer("extent", extentLayer);
+        map.addLayer("geoJSON", geoJSONLayer);
+        map.addLayer("point", pointLayer);
+        map.addLayer("flickr", flickerLayer);
+        //flickerLayer.interaction(map);
+        map.addLayer("radial", radialLayer);
+        //radialLayer.interaction(map);
+
+
+        var tree = new Tree("tree", map);
+        tree.addLayer("base", baseLayer, true);
+        tree.addLayer("extent", extentLayer, false);
+        tree.addLayer("geoJSON", geoJSONLayer, false);
+        tree.addLayer("point", pointLayer, false);
+        tree.addLayer("flickr", flickerLayer, false);
+        tree.addLayer("radial", radialLayer, false);
+
+
+        $zoomIn.click(function () {
+            map.zoomIn();
+        });
+        $zoomOut.click(function () {
+            map.zoomOut();
+        });
+        $panToIndia.click(function () {
+            map.panTo([78.9629, 20.5937]);
+        });
+        $panToLondon.click(function () {
+            map.panTo([-0.12755, 51.507222]);
+        });
+        $nextExtent.click(function () {
+            map.getLayer("extent").next();
+        });
+        $prevExtent.click(function () {
+            map.getLayer("extent").prev();
+        });
+
+
+        //var flicker = map.addLayer("flickr", new Flickr("flickr-info"));
+        //flicker.view(map);
+
+        //var geoJSON = map.addLayer("geojson", new GeoJson());
+
+        //map.addLayer("point", new Point());
+        //var radial = map.addLayer("radial", new Radial("seekbar"));
+        //radial.interaction(map);
+
+
+    });
+</script>
+</body>
+</html>
